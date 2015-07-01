@@ -8,7 +8,7 @@
 #include <tbb/task_group.h>
 
 // For providing random seed
-#include "MexMem.hpp"
+#include "..\Libraries\MexMemoryInterfacing\Headers\MexMem.hpp"
 
 using namespace std;
 

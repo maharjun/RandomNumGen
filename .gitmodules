@@ -1,0 +1,3 @@
+[submodule "Libraries/MexMemoryInterfacing"]
+	path = Libraries/MexMemoryInterfacing
+	url = https://github.com/maharjun/MexMemoryInterfacing
