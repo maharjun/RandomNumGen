@@ -7,8 +7,18 @@
 #include <tbb/task.h>
 #include <tbb/task_group.h>
 
+#if defined RANDOM_NUM_GEN_AS_SUB
+	#define HEADER_PATHS_RANDNUMGEN ..
+#elif !defined HEADER_PATHS_RANDNUMGEN
+	#define HEADER_PATHS_RANDNUMGEN Libraries
+#endif
+
+#define SETQUOTE(A) #A
+#define JOIN_STRING(A,B,C) SETQUOTE(A##B##C)
+#define JOIN_LIB_PATH(PRE, CENT, POST) JOIN_STRING(PRE, CENT, POST)
+
 // For providing random seed
-#include "..\Libraries\MexMemoryInterfacing\Headers\MexMem.hpp"
+#include JOIN_LIB_PATH(..\, HEADER_PATHS_RANDNUMGEN, \MexMemoryInterfacing\Headers\MexMem.hpp)
 
 using namespace std;
 
