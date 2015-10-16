@@ -28,7 +28,8 @@ class XorShiftPlus{
 public:
 	struct StateStruct{
 		uint32_t w, x, y, z;
-		void ConvertVecttoState(const MexVector<uint32_t> &SeedState) {
+		template <class Al>
+		void ConvertVecttoState(const MexVector<uint32_t, Al> &SeedState) {
 			this->w = (SeedState.size() > 0) ? 
 				SeedState[0] : (uint32_t)chrono::system_clock::now().time_since_epoch().count();
 			this->x = (SeedState.size() > 1) ? 
@@ -38,7 +39,8 @@ public:
 			this->z = (SeedState.size() > 3) ?
 				SeedState[3] : (uint32_t)chrono::system_clock::now().time_since_epoch().count();
 		}
-		void ConvertStatetoVect(MexVector<uint32_t> &SeedState) const{
+		template <class Al>
+		void ConvertStatetoVect(MexVector<uint32_t, Al> &SeedState) const{
 			if (SeedState.size() != 4)
 				SeedState.resize(4);
 			SeedState[0] = w;
@@ -46,7 +48,8 @@ public:
 			SeedState[2] = y;
 			SeedState[3] = z;
 		}
-		void ConvertStatetoVect(const MexVector<uint32_t> &SeedState) const{
+		template <class Al>
+		void ConvertStatetoVect(const MexVector<uint32_t, Al> &SeedState) const{
 			if (SeedState.size() != 4)
 				throw ExOps::EXCEPTION_CONST_MOD;
 			SeedState[0] = w;
@@ -55,6 +58,7 @@ public:
 			SeedState[3] = z;
 		}
 	};
+
 private:
 	StateStruct State;
 
@@ -90,14 +94,11 @@ public:
 	void setstate(const StateStruct &SeedState) {
 		State = SeedState;
 	}
-	
-
 };
 
 
-typedef float resTyp;
-
-class BandLimGaussVect : public MexVector<resTyp>{
+template <typename resTyp, class Al = mxAllocator>
+class BandLimGaussVect : public MexVector<resTyp, Al>{
 
 	XorShiftPlus Generator1;
 	XorShiftPlus Generator2;
@@ -106,29 +107,30 @@ public:
 	struct StateStruct{
 		XorShiftPlus Generator1;
 		XorShiftPlus Generator2;
-		MexVector<resTyp> Values;
+		MexVector<resTyp, Al> Values;
 		resTyp alpha;
 		StateStruct() : Generator1(), Generator2(), alpha(resTyp(0)), Values(){};
 	};
-	BandLimGaussVect() : alpha(resTyp(0)),  MexVector<resTyp>(), Generator1(), Generator2(){};
-	BandLimGaussVect(resTyp alpha_) : alpha(alpha_), MexVector<resTyp>(), Generator1(), Generator2(){};
+	BandLimGaussVect() : alpha(resTyp(0)),  MexVector<resTyp, Al>(), Generator1(), Generator2(){};
+	BandLimGaussVect(resTyp alpha_) : alpha(alpha_), MexVector<resTyp, Al>(), Generator1(), Generator2(){};
 
 	BandLimGaussVect(const XorShiftPlus &Generator1_, const XorShiftPlus &Generator2_, resTyp alpha_ = resTyp(0)) :
-		alpha(alpha_), MexVector<resTyp>(), Generator1(Generator1_), Generator2(Generator2_){};
+		alpha(alpha_), MexVector<resTyp, Al>(), Generator1(Generator1_), Generator2(Generator2_){};
 
-	BandLimGaussVect(int n, resTyp alpha_ = resTyp(0)) : alpha(alpha_), MexVector<resTyp>(n, resTyp(0)), Generator1(), Generator2(){};
+	BandLimGaussVect(int n, resTyp alpha_ = resTyp(0)) : alpha(alpha_), MexVector<resTyp, Al>(n, resTyp(0)), Generator1(), Generator2(){};
 
 	BandLimGaussVect(int n, const XorShiftPlus &Generator1_, const XorShiftPlus &Generator2_, resTyp alpha_ = resTyp(0)) :
-		MexVector<resTyp>(n, resTyp(0)),
+		MexVector<resTyp, Al>(n, resTyp(0)),
 		Generator1(Generator1_),
 		Generator2(Generator2_),
 		alpha(alpha_){};
 
-	BandLimGaussVect(const MexVector<resTyp> &V, 
+	template <class Al2>
+	BandLimGaussVect(const MexVector<resTyp, Al2> &V, 
 		const XorShiftPlus &Generator1_, 
 		const XorShiftPlus &Generator2_, 
 		resTyp alpha_ = resTyp(0)) :
-		MexVector<resTyp>(V),
+		MexVector<resTyp, Al>(V),
 		Generator1(Generator1_),
 		Generator2(Generator2_),
 		alpha(alpha_){};
@@ -171,7 +173,7 @@ public:
 		State.alpha = alpha;
 	}
 	void resize(int NewSize){
-		MexVector<resTyp>::resize(NewSize, resTyp(0));
+		MexVector<resTyp, Al>::resize(NewSize, resTyp(0));
 	}
 	const XorShiftPlus& generator1(){
 		return Generator1;
