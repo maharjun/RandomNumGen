@@ -14,11 +14,11 @@
 #endif
 
 #define SETQUOTE(A) #A
-#define JOIN_STRING(A,B,C) SETQUOTE(A##B##C)
-#define JOIN_LIB_PATH(PRE, CENT, POST) JOIN_STRING(PRE, CENT, POST)
+
+#define SETQUOTE_EXPAND(A) SETQUOTE(A)
 
 // For providing random seed
-#include JOIN_LIB_PATH(..\, HEADER_PATHS_RANDNUMGEN, \MexMemoryInterfacing\Headers\MexMem.hpp)
+#include SETQUOTE_EXPAND(../HEADER_PATHS_RANDNUMGEN/MexMemoryInterfacing/Headers/MexMem.hpp)
 
 using namespace std;
 
@@ -104,6 +104,8 @@ class BandLimGaussVect : public MexVector<resTyp, Al>{
 	XorShiftPlus Generator2;
 	resTyp alpha;
 public:
+	typedef typename MexVector<resTyp, Al>::iterator iterator;
+	
 	struct StateStruct{
 		XorShiftPlus Generator1;
 		XorShiftPlus Generator2;
@@ -189,8 +191,8 @@ public:
 		resTyp S = 0;
 		bool value_invalid = true;
 		while (S < 1){
-			U = (resTyp(Gen()) / resTyp(1ui32 << 31)) - 1;
-			V = (resTyp(Gen()) / resTyp(1ui32 << 31)) - 1;
+			U = (resTyp(Gen()) / resTyp(1UL << 31)) - 1;
+			V = (resTyp(Gen()) / resTyp(1UL << 31)) - 1;
 			S = 1 / (U*U + V*V);
 		}
 		if (is_same<resTyp, float>::value){
@@ -224,23 +226,23 @@ public:
 	}
 };
 
-class mt19937Extended : public mt19937{
-public:
-	void getState(MexVector<unsigned int> &V){
-		V.resize(624);
-		for (int i = 0; i < 624; ++i){
-			V[i] = this->_At(i);
-		}
-	}
-	void setState(MexVector<unsigned int> &V){
-		for (int i = 0; i < 624; ++i)
-			this->_Ax[i] = V[i] & _WMSK;
-		this->_Idx = 624;
-	}
-	void setState(unsigned int Seed){
-		this->seed(Seed);
-	}
-};
+// class mt19937Extended : public mt19937{
+// public:
+// 	void getState(MexVector<unsigned int> &V){
+// 		V.resize(624);
+// 		for (int i = 0; i < 624; ++i){
+// 			V[i] = this->_At(i);
+// 		}
+// 	}
+// 	void setState(MexVector<unsigned int> &V){
+// 		for (int i = 0; i < 624; ++i)
+// 			this->_Ax[i] = V[i] & _WMSK;
+// 		this->_Idx = 624;
+// 	}
+// 	void setState(unsigned int Seed){
+// 		this->seed(Seed);
+// 	}
+// };
 // // Random Code mainly to open libraries
 // // Completely useless otherwise
 // void Coolshit(){
