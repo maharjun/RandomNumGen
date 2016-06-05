@@ -18,7 +18,7 @@
 #define SETQUOTE_EXPAND(A) SETQUOTE(A)
 
 // For providing random seed
-#include SETQUOTE_EXPAND(../HEADER_PATHS_RANDNUMGEN/MexMemoryInterfacing/Headers/MexMem.hpp)
+#include <MexMemoryInterfacing/Headers/MexMem.hpp>
 
 using namespace std;
 
